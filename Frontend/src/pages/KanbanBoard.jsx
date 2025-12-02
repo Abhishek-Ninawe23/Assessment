@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchTasks, createTask, updateTask, deleteTask } from "../store/taskSlice";
 import Column from "../components/Column";
 import EditTaskDialog from "../components/EditTaskDialog";
-import TrashBin from "../components/TrashBin";
 import CreateTaskForm from "../components/CreateTaskForm";
 import Filters from "../components/Filters";
 import Pagination from "../components/Pagination";
 import { validateTaskInput } from "../utils/validators";
+import { toast } from "react-toastify";
 
 const StageLabels = { 0: "Backlog", 1: "To Do", 2: "Ongoing", 3: "Done" };
 const stageColors = { 0: "bg-red-100", 1: "bg-blue-100", 2: "bg-yellow-100", 3: "bg-green-100" };
@@ -76,7 +76,10 @@ const KanbanBoard = () => {
     // ---- MOVE TASK BACK/FORWARD ----
     const moveTask = async (task, increment) => {
         const newStage = task.stage + increment;
-        if (newStage < 0 || newStage > 3) return;
+        if (newStage < 0 || newStage > 3) {
+            toast.error("Invalid stage");
+            return;
+        };
 
         await dispatch(updateTask({ id: task._id, data: { stage: newStage } }));
     };
@@ -84,7 +87,10 @@ const KanbanBoard = () => {
 
     // ---- DELETE TASK ----
     const handleDelete = async (id) => {
-        if (!confirm("Delete this task?")) return;
+        if (!confirm("Delete this task?")) {
+            setDragging(false);
+            return;
+        };
         await dispatch(deleteTask(id));
         setDragging(false);
     };

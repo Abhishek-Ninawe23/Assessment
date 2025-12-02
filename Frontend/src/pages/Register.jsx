@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../store/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "@mui/material/Button";
+import { toast } from "react-toastify";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -15,7 +16,10 @@ const Register = () => {
         e.preventDefault();
         const res = await dispatch(registerUser(form));
         if (res.meta.requestStatus === "fulfilled") {
+            toast.success("Account created successfully!");
             navigate("/kanban");
+        } else {
+            toast.error(res.payload || "Registration failed");
         }
     };
 

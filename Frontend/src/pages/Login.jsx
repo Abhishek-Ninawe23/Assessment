@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/authSlice";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 const Login = () => {
@@ -16,7 +17,10 @@ const Login = () => {
         e.preventDefault();
         const res = await dispatch(loginUser(form));
         if (res.meta.requestStatus === "fulfilled") {
+            toast.success("Login successful!");
             navigate("/kanban")
+        } else {
+            toast.error(res.payload || "Login failed");
         }
     }
 
@@ -66,13 +70,6 @@ const Login = () => {
                         {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
-
-                {/* Error Message */}
-                {error && (
-                    <div className="mt-4 text-center text-red-600 font-medium bg-red-100 p-2 rounded-lg">
-                        {error}
-                    </div>
-                )}
 
                 {/* Footer */}
                 <p className="text-center mt-6 text-gray-600">

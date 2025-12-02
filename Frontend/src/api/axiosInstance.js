@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 // Base URL from Vite env (VITE_ prefix required)
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -38,7 +39,11 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
     (res) => res,
-    (err) => { return Promise.reject(err) }
+    (err) => {
+        const message = err.response?.data?.message || "Something went wrong";
+        toast.error(message);
+        return Promise.reject(err);
+    }
 );
 
 export default api;

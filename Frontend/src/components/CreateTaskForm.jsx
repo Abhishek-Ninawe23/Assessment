@@ -23,7 +23,10 @@ const CreateTaskForm = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         const err = validateTaskInput({ name, priority });
-        if (err) return alert(err);
+        if (err) {
+            toast.error(err);
+            return;
+        };
 
         setLoading(true);
         const res = await dispatch(createTask({ name, priority, deadline: deadline || null }));
@@ -75,6 +78,7 @@ const CreateTaskForm = () => {
                     type="date"
                     className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                     value={deadline}
+                    required={true}
                     onChange={(e) => setDeadline(e.target.value)}
                 />
             </div>

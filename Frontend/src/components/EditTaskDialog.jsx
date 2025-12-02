@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
+import { toast } from "react-toastify";
 
 
 export default function EditTaskDialog({ open, onClose, task, onSave }) {
@@ -32,8 +33,21 @@ export default function EditTaskDialog({ open, onClose, task, onSave }) {
 
 
     const handleSave = () => {
-        if (!form.name.trim())
-            return alert("Name Required");
+        if (!form.name.trim()) {
+            toast.error("Task name cannot be empty");
+            return;
+        }
+        if (form.priority !== "low" && form.priority !== "medium" && form.priority !== "high") {
+            toast.error("Invalid priority value");
+            return;
+        }
+        if (form.deadline) {
+            const deadlineDate = new Date(form.deadline);
+            if (isNaN(deadlineDate.getTime())) {
+                toast.error("Invalid deadline date");
+                return;
+            }
+        }
         onSave(form);
     }
 
