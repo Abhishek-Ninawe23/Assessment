@@ -36,6 +36,12 @@ export async function register(req, res, next) {
         //generate JWT token
         const token = generateToken(user);
 
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
         res.status(201).json({
             message: 'User registered successfully',
             user: {
@@ -86,6 +92,12 @@ export async function login(req, res, next) {
         //generate JWT token
         const token = generateToken(user);
 
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
         res.status(200).json({
             message: 'User Login successful',
             user: {
@@ -102,4 +114,15 @@ export async function login(req, res, next) {
     } catch (error) {
         next(error);
     }
-}
+};
+
+export const logoutUser = (req, res) => {
+    // clear the cookie by setting it to empty + immediate expiry
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false
+    });
+
+    res.status(200).json({ message: "Logged out successfully" });
+};

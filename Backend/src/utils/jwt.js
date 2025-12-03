@@ -2,7 +2,9 @@ import jwt from "jsonwebtoken";
 
 // Generate JWT Token
 function generateToken(user) {
-    return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "1d" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
+
+    return token;
 }
 
 export { generateToken };

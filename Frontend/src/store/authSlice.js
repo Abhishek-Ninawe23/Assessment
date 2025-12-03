@@ -8,7 +8,7 @@ export const loginUser = createAsyncThunk(
         try {
 
             const res = await api.post("auth/login", { identifier, password });
-            return res.data;
+            return res.data.user; //only user data
 
         } catch (error) {
             return thunkApi.rejectWithValue(error.response?.data?.message || error.message || "Login Failed");
@@ -23,7 +23,7 @@ export const registerUser = createAsyncThunk(
         try {
 
             const res = await api.post("/auth/register", payload);
-            return res.data;    //user,token
+            return res.data.user;    //only user data
 
         } catch (error) {
             return thunkApi.rejectWithValue(error.response?.data?.message || error.message || "Registration Failed");
@@ -33,8 +33,7 @@ export const registerUser = createAsyncThunk(
 
 // Initial State for Auth Slice
 const initialState = {
-    user: JSON.parse(localStorage.getItem("user")) || null,
-    token: localStorage.getItem("token") || null,
+    user: null,
     loading: false,
     error: null
 };
@@ -48,7 +47,9 @@ const authSlice = createSlice({
             state.user = null;
             state.token = null;
             localStorage.removeItem("user");
-            localStorage.removeItem("token");
+
+            // Call backend to clear cookie
+            api.post("/auth/logout");
         }
     },
     extraReducers: (builder) => {
@@ -61,10 +62,8 @@ const authSlice = createSlice({
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
-                state.user = action.payload.user;
-                state.token = action.payload.token;
-                localStorage.setItem("user", JSON.stringify(action.payload.user))
-                localStorage.setItem("token", action.payload.token)
+                state.user = action.payload;
+                localStorage.setItem("user", JSON.stringify(state.user))
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
@@ -78,10 +77,8 @@ const authSlice = createSlice({
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
-                state.user = action.payload.user;
-                state.token = action.payload.token;
-                localStorage.setItem("user", JSON.stringify(action.payload.user))
-                localStorage.setItem("token", action.payload.token)
+                state.user = action.payload;
+                localStorage.setItem("user", JSON.stringify(state.user))
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;

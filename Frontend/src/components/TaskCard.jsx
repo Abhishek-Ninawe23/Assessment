@@ -29,7 +29,7 @@ const TaskCard = React.memo(function TaskCard({
             className="bg-white shadow-md rounded-xl p-4 mb-4 cursor-grab active:cursor-grabbing hover:shadow-lg transition-shadow duration-200 border border-gray-200"
         >
             {/* Top Section */}
-            <div className="flex flex-wrap justify-center items-center mb-2">
+            <div className="flex sm:flex-wrap lg:flex-nowrap justify-center items-center mb-2">
                 <div className="font-semibold text-gray-800 text-base break-all w-full">
                     {task.name}
                 </div>
@@ -43,7 +43,7 @@ const TaskCard = React.memo(function TaskCard({
             </div>
 
             {/* Deadline */}
-            <div className="text-sm text-gray-600 mb-3">
+            <div className="text-sm font-bold text-gray-600 mb-3">
                 {task.deadline ? `Due ${new Date(task.deadline).toLocaleDateString()}` : "No deadline"}
             </div>
 

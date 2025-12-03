@@ -37,10 +37,6 @@ export default function EditTaskDialog({ open, onClose, task, onSave }) {
             toast.error("Task name cannot be empty");
             return;
         }
-        if (form.priority !== "low" && form.priority !== "medium" && form.priority !== "high") {
-            toast.error("Invalid priority value");
-            return;
-        }
         if (form.deadline) {
             const deadlineDate = new Date(form.deadline);
             if (isNaN(deadlineDate.getTime())) {
@@ -49,6 +45,7 @@ export default function EditTaskDialog({ open, onClose, task, onSave }) {
             }
         }
         onSave(form);
+        onClose();
     }
 
 
@@ -66,9 +63,7 @@ export default function EditTaskDialog({ open, onClose, task, onSave }) {
                     maxRows={4}
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    inputProps={{
-                        style: { whiteSpace: "wrap", wordBreak: "break-word" }
-                    }}
+
                 />
 
                 <TextField

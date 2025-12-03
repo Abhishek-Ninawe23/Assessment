@@ -84,6 +84,18 @@ const KanbanBoard = () => {
         await dispatch(updateTask({ id: task._id, data: { stage: newStage } }));
     };
 
+    // ---- UPDATE TASK ----
+    const handleEditSave = async (data) => {
+        const res = await dispatch(updateTask({ id: editTask._id, data }));
+
+        if (res.meta.requestStatus === "fulfilled") {
+            toast.success("Task updated successfully!");
+            setEditTask(null);
+        } else {
+            toast.error(res.payload || "Task Update failed");
+        }
+    };
+
 
     // ---- DELETE TASK ----
     const handleDelete = async (id) => {
@@ -150,9 +162,7 @@ const KanbanBoard = () => {
                 open={editTask}
                 task={editTask}
                 onClose={() => setEditTask(null)}
-                onSave={(data) =>
-                    dispatch(updateTask({ id: editTask._id, data }))
-                }
+                onSave={handleEditSave}
             />
 
 
