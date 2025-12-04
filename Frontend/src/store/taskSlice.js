@@ -4,11 +4,12 @@ import api from "../api/axiosInstance.js";
 //Get all tasks
 export const fetchTasks = createAsyncThunk(
     "tasks/fetchTasks",
-    async ({ stage, search, page = 1, limit = 5, sort }, thunkAPI) => {
+    async ({ stage, search, page = 1, limit = 8, sort }, thunkAPI) => {
         try {
 
             const params = new URLSearchParams();
 
+            //append only provided params
             if (stage !== undefined) {
                 params.append("stage", stage);
             }
@@ -58,7 +59,6 @@ export const updateTask = createAsyncThunk(
     "tasks/updateTask",
     async ({ id, data }, thunkAPI) => {
         try {
-
             const res = await api.put(`/tasks/${id}`, data);
             return res.data.task; //return updated task
 

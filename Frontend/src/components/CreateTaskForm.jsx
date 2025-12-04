@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { validateTaskInput } from "../utils/validators";
-import { useDispatch, useSelector } from "react-redux";
-
+import { useDispatch } from "react-redux";
 import { createTask } from "../store/taskSlice";
 
 
@@ -42,7 +41,7 @@ const CreateTaskForm = () => {
     return (
         <form
             onSubmit={handleCreate}
-            className="bg-white shadow-lg rounded-xl p-6 grid grid-cols-1 md:grid-cols-4 gap-6 items-end mb-10"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-white shadow-lg rounded-xl p-6 items-end mb-10"
         >
 
             {/* Task Name */}
@@ -86,6 +85,7 @@ const CreateTaskForm = () => {
             {/* Create Button */}
             <div className="flex justify-start md:justify-end">
                 <Button
+                    fullWidth
                     variant="contained"
                     type="submit"
                     startIcon={<AddIcon />}
@@ -100,6 +100,7 @@ const CreateTaskForm = () => {
                 >
                     {loading ? "Creating..." : "Create Task"}
                 </Button>
+
             </div>
 
         </form>

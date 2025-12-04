@@ -7,13 +7,14 @@ import App from './App.jsx'
 import './index.css'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingSpinner from './components/LoadingSpinner.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         {/* Suspense used for lazy loaded pages */}
-        <Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>
+        <Suspense fallback={<div style={{ padding: 20 }}><LoadingSpinner /></div>}>
           <App />
           <ToastContainer
             position="top-right"

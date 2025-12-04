@@ -3,30 +3,44 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import Captcha from "../components/Captcha";
 
 const Login = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error } = useSelector((state) => state.auth);
+    const { loading } = useSelector((state) => state.auth);
 
-    const [form, setForm] = useState({ identifier: "", password: "" });
+    const [form, setForm] = useState({ identifier: "", password: "", captcha: "", captchaToken: "" });
+
 
     const submit = async (e) => {
         e.preventDefault();
-        const res = await dispatch(loginUser(form));
+
+        if (!form.captcha.trim()) {
+            toast.error("Please enter Captcha")
+            return;
+        }
+
+        const res = await dispatch(loginUser({
+            identifier: form.identifier,
+            password: form.password,
+            captcha: form.captcha,
+            captchaToken: form.captchaToken, //send token for verification
+        }));
+
         if (res.meta.requestStatus === "fulfilled") {
             toast.success("Login successful!");
-            navigate("/kanban")
+            navigate("/dashboard")
         } else {
+            await loadCaptcha(); //if login fails, refresh captcha
             toast.error(res.payload || "Login failed");
         }
     }
 
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+        <div className="flex min-h-fit rounded-2xl items-center justify-center bg-gray-100 py-15 px-4">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Welcome Back</h2>
 
@@ -38,8 +52,7 @@ const Login = () => {
                             name="identifier"
                             value={form.identifier}
                             onChange={(e) => setForm({ ...form, identifier: e.target.value })}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 
-                         focus:ring-blue-500 focus:outline-none"
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             placeholder="Enter your email or username"
                             required
                         />
@@ -53,19 +66,20 @@ const Login = () => {
                             name="password"
                             value={form.password}
                             onChange={(e) => setForm({ ...form, password: e.target.value })}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 
-                         focus:ring-blue-500 focus:outline-none"
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             placeholder="Enter your password"
                             required
                         />
                     </div>
 
+                    {/* Captcha */}
+                    <Captcha form={form} setForm={setForm} />
+
                     {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-2 mt-2 bg-blue-600 text-white font-semibold rounded-lg
-                       hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+                        className="w-full py-2 mt-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400"
                     >
                         {loading ? "Logging in..." : "Login"}
                     </button>

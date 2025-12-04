@@ -26,7 +26,7 @@ const TaskCard = React.memo(function TaskCard({
             draggable
             onDragStart={(e) => onDragStart(e, task)}
             onDragEnd={onDragEnd}
-            className="bg-white shadow-md rounded-xl p-4 mb-4 cursor-grab active:cursor-grabbing hover:shadow-lg transition-shadow duration-200 border border-gray-200"
+            className="bg-white shadow-md rounded-xl p-4 mb-4 cursor-grab active:cursor-grabbing hover:shadow-lg transition-shadow duration-200 border border-gray-200 justify-center text-center"
         >
             {/* Top Section */}
             <div className="flex sm:flex-wrap lg:flex-nowrap justify-center items-center mb-2">

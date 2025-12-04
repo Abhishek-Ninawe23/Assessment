@@ -23,10 +23,8 @@ export default function EditTaskDialog({ open, onClose, task, onSave }) {
             setForm({
                 name: task.name || "",
                 priority: task.priority || "low",
-                deadline: task.deadline
-                    ? new Date(task.deadline).toISOString().slice(0, 10)
-                    : "",
-                stage: task.stage ?? 0
+                deadline: task.deadline ? new Date(task.deadline).toISOString().slice(0, 10) : "",
+                stage: task.stage ?? 0 //default to 0 if stage is undefined
             });
         }
     }, [task]);
@@ -39,6 +37,8 @@ export default function EditTaskDialog({ open, onClose, task, onSave }) {
         }
         if (form.deadline) {
             const deadlineDate = new Date(form.deadline);
+
+            // check for invalid date
             if (isNaN(deadlineDate.getTime())) {
                 toast.error("Invalid deadline date");
                 return;

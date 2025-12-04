@@ -4,17 +4,26 @@ import { registerUser } from "../store/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
+import Captcha from "../components/Captcha";
 
 const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { loading, error } = useSelector((state) => state.auth);
 
-    const [form, setForm] = useState({ name: "", username: "", email: "", password: "", phone: "" });
+    const [form, setForm] = useState({ name: "", username: "", email: "", password: "", phone: "", captcha: "", captchaToken: "" });
 
     const submit = async (e) => {
         e.preventDefault();
-        const res = await dispatch(registerUser(form));
+        const res = await dispatch(registerUser({
+            name: form.name,
+            username: form.username,
+            email: form.email,
+            password: form.password,
+            phone: form.phone,
+            captcha: form.captcha,
+            captchaToken: form.captchaToken,
+        }));
         if (res.meta.requestStatus === "fulfilled") {
             toast.success("Account created successfully!");
             navigate("/kanban");
@@ -24,7 +33,7 @@ const Register = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+        <div className="flex min-h-fit py-5 rounded-2xl items-center justify-center bg-gray-100 px-4">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
                     Create Account
@@ -109,6 +118,9 @@ const Register = () => {
                         />
                     </div>
 
+                    <Captcha form={form} setForm={setForm} />
+
+
                     {/* Register Button */}
                     <Button
                         variant="contained"
@@ -126,12 +138,6 @@ const Register = () => {
                     </Button>
                 </form>
 
-                {/* Error Message */}
-                {error && (
-                    <div className="mt-4 text-center text-red-600 font-medium bg-red-100 p-2 rounded-lg">
-                        {error}
-                    </div>
-                )}
 
                 {/* Footer */}
                 <p className="text-center mt-6 text-gray-600">

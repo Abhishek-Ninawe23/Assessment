@@ -7,13 +7,17 @@ const registerSchema = joi.object({
     email: joi.string().email().required(),
     password: joi.string().min(6).required(),
     phone: joi.string().pattern(/^[0-9]{10}$/).allow(null, ''),
-    profileImage: joi.string().uri().allow(null, '')
+    profileImage: joi.string().uri().allow(null, ''),
+    captcha: joi.string().required(),
+    captchaToken: joi.string().required()
 });
 
 // Login Schema
 const loginSchema = joi.object({
     identifier: joi.string().required(), // can be email or username
-    password: joi.string().required()
+    password: joi.string().required(),
+    captcha: joi.string().required(),
+    captchaToken: joi.string().required()
 })
 
 export { registerSchema, loginSchema };

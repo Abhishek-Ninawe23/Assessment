@@ -17,8 +17,7 @@ const Dashboard = () => {
     const pending = total - completed;
 
     return (
-        <div>
-            <h1>Dashboard</h1>
+        <div className="px-6 rounded-2xl py-8 bg-gray-100 min-h-fit">
 
             <div className="flex flex-wrap gap-12 text-center justify-center my-5">
                 <div className="bg-blue-400 p-5 rounded-3xl">
@@ -34,7 +33,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col items-center">
                 <Link to="/kanban">
                     Go to <span className="text-indigo-600" >Kanban</span>
                 </Link>

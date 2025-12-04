@@ -3,6 +3,9 @@ import { Routes, Route, Link } from "react-router-dom";
 import './App.css'
 import Navbar from './components/Navbar.jsx';
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { loadUser } from './store/authSlice.js';
 
 // Lazy load pages (improves initial load time)
 const Login = lazy(() => import("./pages/Login"));
@@ -12,6 +15,13 @@ const KanbanBoard = lazy(() => import("./pages/KanbanBoard"));
 
 
 function App() {
+
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadUser());
+  }, []);
+
 
   return (
     <>

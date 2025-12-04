@@ -1,19 +1,7 @@
 import React from "react";
 import TaskCard from "./TaskCard";
 
-const Column = ({
-    title,
-    tasks,
-    onDrop,
-    onDragOver,
-    className,
-    onDragStart,
-    onDragEnd,
-    onBack,
-    onForward,
-    onEdit,
-    onDelete,
-}) => {
+const Column = ({ title, tasks, onDrop, onDragOver, className, onDragStart, onDragEnd, onBack, onForward, onEdit, onDelete, }) => {
     return (
         <div
             className={`rounded-xl shadow-md p-4 min-h-[350px] flex flex-col ${className}`}

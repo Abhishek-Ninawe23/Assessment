@@ -14,6 +14,12 @@ export async function createTask(req, res, next) {
             throw new Error(error.details?.[0]?.message || "Invalid input data");
         }
 
+        const exist = await Task.findOne({ name: req.body.name, user: req.user._id });
+        if (exist) {
+            res.status(400);
+            throw new Error("Task with the same name already exists.");
+        }
+
         //destructure passed data into variables
         const { name, stage = 0, priority, deadline } = req.body;
         const userID = req.user._id; //extract user
@@ -32,7 +38,7 @@ export async function createTask(req, res, next) {
 export async function getTasks(req, res, next) {
     try {
         // optional query params: stage, search, sort, page, limit
-        const { stage, search, page = 1, limit = 5 } = req.query;
+        const { stage, search, page = 1, limit = 8 } = req.query;
 
         //ensures that users can only fetch their own tasks.
         const filter = { user: req.user._id };
@@ -101,12 +107,16 @@ export async function updateTask(req, res, next) {
             }
         }
 
-        await task.save()
+        await task.save();
         res.json({
             success: true,
             task
         });
     } catch (error) {
+        if (error.code === 11000) { //duplicate key error
+            res.status(400);
+            return next(new Error("Task name already exists."));
+        }
         next(error);
     }
 }

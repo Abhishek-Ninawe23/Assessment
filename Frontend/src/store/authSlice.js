@@ -4,10 +4,10 @@ import api from "../api/axiosInstance.js";
 // Async Thunk for login
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
-    async ({ identifier, password }, thunkApi) => {
+    async (payload, thunkApi) => {
         try {
-
-            const res = await api.post("auth/login", { identifier, password });
+            //payload = { identifier, password, captcha, captchaToken }
+            const res = await api.post("auth/login", payload);
             return res.data.user; //only user data
 
         } catch (error) {
@@ -31,10 +31,23 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+// Async Thunk for loading user from backend
+export const loadUser = createAsyncThunk(
+    "auth/loadUser",
+    async (_, thunkApi) => {
+        try {
+            const res = await api.get("/auth/me");
+            return res.data.user;
+        } catch (err) {
+            return thunkApi.rejectWithValue(null);
+        }
+    }
+);
+
 // Initial State for Auth Slice
 const initialState = {
     user: null,
-    loading: false,
+    loading: true,
     error: null
 };
 
@@ -83,6 +96,22 @@ const authSlice = createSlice({
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Registration Failed";
+            })
+            //loadUser Cases
+            .addCase(loadUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(loadUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                localStorage.setItem("user", JSON.stringify(action.payload));
+            })
+
+            .addCase(loadUser.rejected, (state) => {
+                state.loading = false;
+                state.user = null;
+                localStorage.removeItem("user");
             });
     }
 });

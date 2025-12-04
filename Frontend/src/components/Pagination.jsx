@@ -21,13 +21,19 @@ const Pagination = ({ page, totalPages, setPage }) => {
             </Button>
 
             {/* PAGE INFO */}
-            <div className="
-                px-4 py-2 
-                bg-white shadow-md rounded-lg 
-                text-gray-800 font-semibold
-                border border-gray-200
-            ">
-                Page {page} of {totalPages}
+            <div className="flex items-center justify-center">
+                {
+                    // generate page numbers using totalPages
+                    [...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setPage(index + 1)}
+                            className={`mx-1 px-3 py-1 rounded-lg ${page === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-colors`}
+                        >
+                            {index + 1}
+                        </button>
+                    ))
+                }
             </div>
 
             {/* NEXT BUTTON */}

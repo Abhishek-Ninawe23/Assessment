@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTasks, createTask, updateTask, deleteTask } from "../store/taskSlice";
+import { fetchTasks, updateTask, deleteTask } from "../store/taskSlice";
 import Column from "../components/Column";
 import EditTaskDialog from "../components/EditTaskDialog";
 import CreateTaskForm from "../components/CreateTaskForm";
 import Filters from "../components/Filters";
 import Pagination from "../components/Pagination";
-import { validateTaskInput } from "../utils/validators";
+import TrashBin from "../components/TrashBin";
 import { toast } from "react-toastify";
 
 const StageLabels = { 0: "Backlog", 1: "To Do", 2: "Ongoing", 3: "Done" };
@@ -19,7 +19,7 @@ const KanbanBoard = () => {
 
     // Filters & Pagination
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(8);
     const [search, setSearch] = useState("");
     const [priorityFilter, setPriorityFilter] = useState("all");
 
@@ -44,7 +44,7 @@ const KanbanBoard = () => {
 
     const resetFilters = () => {
         setPage(1);
-        setLimit(5);
+        setLimit(8);
         setSearch("");
         setPriorityFilter("all");
     };
@@ -72,10 +72,26 @@ const KanbanBoard = () => {
         await dispatch(updateTask({ id, data: { stage: newStage } }));
     };
 
+    // ---- DROP TO DELETE ----
+    const onDropToDelete = async (taskId) => {
+        setDragging(false);
+
+        const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+        if (!confirmDelete) return;
+
+        const res = await dispatch(deleteTask(taskId));
+
+        if (res.meta.requestStatus === "fulfilled") {
+            toast.success("Task Deleted Successfully");
+        } else {
+            toast.error("Failed to delete task");
+        }
+    };
+
 
     // ---- MOVE TASK BACK/FORWARD ----
-    const moveTask = async (task, increment) => {
-        const newStage = task.stage + increment;
+    const moveTask = async (task, accumulator) => {
+        const newStage = task.stage + accumulator;
         if (newStage < 0 || newStage > 3) {
             toast.error("Invalid stage");
             return;
@@ -109,26 +125,27 @@ const KanbanBoard = () => {
 
 
     return (
-        <div className="px-6 py-8 bg-gray-100 min-h-screen">
+        <div className="px-6 rounded-2xl py-8 bg-gray-100 min-h-fit">
 
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">Kanban Board</h2>
+            <div className="flex sm:flex-row flex-col gap-3">
+                {/* Create Task Form */}
+                <CreateTaskForm />
 
-            {/* Create Task Form */}
-            <CreateTaskForm />
+                {/* Filters */}
+                <Filters
+                    search={search}
+                    limit={limit}
+                    priorityFilter={priorityFilter}
+                    setSearch={setSearch}
+                    setLimit={setLimit}
+                    setPriorityFilter={setPriorityFilter}
+                    resetFilters={resetFilters}
+                />
 
-            {/* Filters */}
-            <Filters
-                search={search}
-                limit={limit}
-                priorityFilter={priorityFilter}
-                setSearch={setSearch}
-                setLimit={setLimit}
-                setPriorityFilter={setPriorityFilter}
-                resetFilters={resetFilters}
-            />
+            </div>
 
             {/* Kanban Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 {[0, 1, 2, 3].map((stage) => (
                     <Column
                         key={stage}
@@ -136,11 +153,11 @@ const KanbanBoard = () => {
                         tasks={byStage[stage]}
                         className={stageColors[stage]}
 
-
+                        // DROP
                         onDrop={(e) => onDropToStage(e, stage)}
-                        onDragOver={allowDrop}
 
                         // DRAG
+                        onDragOver={allowDrop}
                         onDragStart={onDragStart}
                         onDragEnd={onDragEnd}
 
@@ -163,6 +180,12 @@ const KanbanBoard = () => {
                 task={editTask}
                 onClose={() => setEditTask(null)}
                 onSave={handleEditSave}
+            />
+
+            {/* TrashBin for Task Deletion */}
+            <TrashBin
+                visible={dragging}
+                onDropDelete={onDropToDelete}
             />
 
 
